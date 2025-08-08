@@ -1,3 +1,3 @@
 # blutext
 
-A description of this project.
+(Soon) WSIWYG markdown text editor written in gtk & libadwaita
