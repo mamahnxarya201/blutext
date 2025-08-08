@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="blutext">
+	<schema id="org.menenggala.blutext" path="/org/menenggala/blutext/">
+	</schema>
+</schemalist>

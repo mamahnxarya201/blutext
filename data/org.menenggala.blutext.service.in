@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.menenggala.blutext
+Exec=@bindir@/blutext --gapplication-service

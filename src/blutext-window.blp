@@ -1,0 +1,51 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $BlutextWindow: Adw.ApplicationWindow {
+  title: _("Blutext");
+  default-width: 800;
+  default-height: 600;
+
+  [content]
+  Adw.ToolbarView {
+    [top]
+    Adw.HeaderBar {
+      [start]
+      Gtk.Button open_button {
+        label: _("Open");
+        action-name: "win.open";
+     }
+
+      [end]
+      Gtk.MenuButton {
+        primary: true;
+        icon-name: "open-menu-symbolic";
+        tooltip-text: "Main Menu";
+        menu-model: primary_menu;
+      }
+    }
+
+    content: Gtk.TextView main_text_view {
+      monospace: true;
+    };
+  }
+}
+
+menu primary_menu {
+  section {
+    item {
+      label: _("Preferences");
+      action: "app.preferences";
+    }
+
+    item {
+      label: _("Keyboard Shortcuts");
+      action: "win.show-help-overlay";
+    }
+
+    item {
+      label: _("About Blutext");
+      action: "app.about";
+    }
+  }
+}

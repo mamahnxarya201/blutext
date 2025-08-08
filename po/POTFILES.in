@@ -1,0 +1,8 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+data/org.menenggala.blutext.desktop.in
+data/org.menenggala.blutext.metainfo.xml.in
+data/org.menenggala.blutext.gschema.xml
+src/main.c
+src/blutext-window.c
+src/blutext-window.ui
