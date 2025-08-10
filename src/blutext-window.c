@@ -50,6 +50,27 @@ blutext_window_class_init (BlutextWindowClass *klass)
 }
 
 static void
+show_error_dialog (BlutextWindow *self,
+                   const gchar *heading,
+                   const gchar *body)
+{
+  AdwDialog *dialog;
+
+  dialog = adw_alert_dialog_new (heading, NULL);
+
+  adw_alert_dialog_set_body (ADW_ALERT_DIALOG (dialog), body);
+
+  adw_alert_dialog_add_responses (ADW_ALERT_DIALOG (dialog),
+                                  "cancel", ("_Understood, My Liege"),
+                                  NULL);
+
+  adw_alert_dialog_set_default_response (ADW_ALERT_DIALOG (dialog), "cancel");
+  adw_alert_dialog_set_close_response (ADW_ALERT_DIALOG (dialog), "cancel");
+
+  adw_dialog_present (dialog, NULL);
+}
+
+static void
 open_file_complete_gacb (
     GObject *source_object,
     GAsyncResult *result,
@@ -75,6 +96,9 @@ open_file_complete_gacb (
           "Unable to load the contents of %s: "
           "the file is not encoded with UTF-8\n",
           g_file_peek_path (file));
+      show_error_dialog (self, "What the fuck? Just Use UTF-8 !",
+                         "This file is not UTF-8 encoded.\n"
+                         "GTK demands UTF-8, peasant.");
       return;
     }
 
@@ -149,7 +173,7 @@ update_cursor_position_gcb (
 }
 
 static void
-save_file_complete_garcb (
+save_file_complete_gacb (
     GObject *source_object,
     GAsyncResult *result,
     gpointer user_data)
@@ -203,12 +227,12 @@ save_file (BlutextWindow *self, GFile *file)
       FALSE,
       G_FILE_CREATE_NONE,
       NULL,
-      save_file_complete_garcb,
+      save_file_complete_gacb,
       self);
 }
 
 static void
-on_save_response_garcb (GObject *source, GAsyncResult *result, gpointer user_data)
+on_save_response_gacb (GObject *source, GAsyncResult *result, gpointer user_data)
 {
   GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
   g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
@@ -225,7 +249,7 @@ save_file_dialog_gcb (
 {
   g_autoptr (GtkFileDialog) dialog = gtk_file_dialog_new ();
   gtk_file_dialog_save (
-      dialog, GTK_WINDOW (self), NULL, on_save_response_garcb, self);
+      dialog, GTK_WINDOW (self), NULL, on_save_response_gacb, self);
 }
 
 static void
