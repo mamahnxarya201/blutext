@@ -29,6 +29,7 @@ struct _BlutextWindow
   /* Template widgets */
   GtkTextView *main_text_view;
   GtkButton *open_button;
+  GtkLabel *cursor_pos;
 };
 
 G_DEFINE_FINAL_TYPE (BlutextWindow, blutext_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -41,6 +42,7 @@ blutext_window_class_init (BlutextWindowClass *klass)
   gtk_widget_class_set_template_from_resource (widget_class, "/org/menenggala/blutext/blutext-window.ui");
   gtk_widget_class_bind_template_child (widget_class, BlutextWindow, main_text_view);
   gtk_widget_class_bind_template_child (widget_class, BlutextWindow, open_button);
+  gtk_widget_class_bind_template_child (widget_class, BlutextWindow, cursor_pos);
 }
 
 static void
@@ -138,6 +140,24 @@ blutext_window__open_file_dialog (GAction *action,
 }
 
 static void
+blutext_window__update_cursor_position (GtkTextBuffer *buffer,
+                                        GParamSpec *pspec,
+                                        BlutextWindow *self)
+{
+  int cursor_pos = 0;
+  g_object_get (buffer, "cursor-position", &cursor_pos, NULL);
+
+  GtkTextIter iter;
+  gtk_text_buffer_get_iter_at_offset (buffer, &iter, cursor_pos);
+
+  g_autofree char *cursor_str =
+    g_strdup_printf ("Ln %d, Col %d",
+                     gtk_text_iter_get_line (&iter) + 1,
+                     gtk_text_iter_get_line_offset (&iter) + 1);
+  gtk_label_set_text (self->cursor_pos, cursor_str);
+}
+
+static void
 blutext_window_init (BlutextWindow *self)
 {
   gtk_widget_init_template (GTK_WIDGET (self));
@@ -148,5 +168,8 @@ blutext_window_init (BlutextWindow *self)
                     G_CALLBACK (blutext_window__open_file_dialog),
                     self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_action));
+  GtkTextBuffer *buffer = gtk_text_view_get_buffer (self->main_text_view);
+  g_signal_connect (buffer, "notify::cursor-position",
+                    G_CALLBACK (blutext_window__update_cursor_position), self);
 }
 

@@ -14,7 +14,7 @@ template $BlutextWindow: Adw.ApplicationWindow {
       Gtk.Button open_button {
         label: _("Open");
         action-name: "win.open";
-     }
+      }
 
       [end]
       Gtk.MenuButton {
@@ -22,6 +22,16 @@ template $BlutextWindow: Adw.ApplicationWindow {
         icon-name: "open-menu-symbolic";
         tooltip-text: "Main Menu";
         menu-model: primary_menu;
+      }
+
+      [end]
+      Gtk.Label cursor_pos {
+        label: _("Ln 0, Col 0");
+
+        styles [
+          "dim-label",
+          "numeric",
+        ]
       }
     }
 
