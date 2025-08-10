@@ -50,7 +50,7 @@ blutext_window_class_init (BlutextWindowClass *klass)
 }
 
 static void
-open_file_complete (
+open_file_complete_gacb (
     GObject *source_object,
     GAsyncResult *result,
     BlutextWindow *self)
@@ -105,11 +105,11 @@ static void
 open_file (BlutextWindow *self, GFile *file)
 {
   g_file_load_contents_async (
-      file, NULL, (GAsyncReadyCallback) open_file_complete, self);
+      file, NULL, (GAsyncReadyCallback) open_file_complete_gacb, self);
 }
 
 static void
-on_open_response (GObject *source, GAsyncResult *result, gpointer user_data)
+on_open_response_gacb (GObject *source, GAsyncResult *result, gpointer user_data)
 {
   GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
   BlutextWindow *self = user_data;
@@ -119,18 +119,18 @@ on_open_response (GObject *source, GAsyncResult *result, gpointer user_data)
 }
 
 static void
-blutext_window__open_file_dialog (
+open_file_dialog_gcb (
     GAction *action,
     GVariant *parameter,
     BlutextWindow *self)
 {
   g_autoptr (GtkFileDialog) dialog = gtk_file_dialog_new ();
   gtk_file_dialog_open (
-      dialog, GTK_WINDOW (self), NULL, on_open_response, self);
+      dialog, GTK_WINDOW (self), NULL, on_open_response_gacb, self);
 }
 
 static void
-blutext_window__update_cursor_position (
+update_cursor_position_gcb (
     GtkTextBuffer *buffer,
     GParamSpec *pspec,
     BlutextWindow *self)
@@ -149,7 +149,7 @@ blutext_window__update_cursor_position (
 }
 
 static void
-save_file_complete (
+save_file_complete_garcb (
     GObject *source_object,
     GAsyncResult *result,
     gpointer user_data)
@@ -203,15 +203,14 @@ save_file (BlutextWindow *self, GFile *file)
       FALSE,
       G_FILE_CREATE_NONE,
       NULL,
-      save_file_complete,
+      save_file_complete_garcb,
       self);
 }
 
 static void
-on_save_response (GObject *source, GAsyncResult *result, gpointer user_data)
+on_save_response_garcb (GObject *source, GAsyncResult *result, gpointer user_data)
 {
   GtkFileDialog *dialog = GTK_FILE_DIALOG (source);
-  // BlutextWindow *self = user_data;
   g_autoptr (GFile) file = gtk_file_dialog_save_finish (dialog, result, NULL);
 
   if (file != NULL)
@@ -219,14 +218,14 @@ on_save_response (GObject *source, GAsyncResult *result, gpointer user_data)
 }
 
 static void
-blutext_window__save_file_dialog (
+save_file_dialog_gcb (
     GAction *action,
     GVariant *param,
     BlutextWindow *self)
 {
   g_autoptr (GtkFileDialog) dialog = gtk_file_dialog_new ();
   gtk_file_dialog_save (
-      dialog, GTK_WINDOW (self), NULL, on_save_response, self);
+      dialog, GTK_WINDOW (self), NULL, on_save_response_garcb, self);
 }
 
 static void
@@ -238,7 +237,7 @@ blutext_window_init (BlutextWindow *self)
   g_signal_connect (
       open_action,
       "activate",
-      G_CALLBACK (blutext_window__open_file_dialog),
+      G_CALLBACK (open_file_dialog_gcb),
       self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (open_action));
 
@@ -247,7 +246,7 @@ blutext_window_init (BlutextWindow *self)
   g_signal_connect (
       save_as_action,
       "activate",
-      G_CALLBACK (blutext_window__save_file_dialog),
+      G_CALLBACK (save_file_dialog_gcb),
       self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (save_as_action));
 
@@ -256,7 +255,7 @@ blutext_window_init (BlutextWindow *self)
   g_signal_connect (
       buffer,
       "notify::cursor-position",
-      G_CALLBACK (blutext_window__update_cursor_position),
+      G_CALLBACK (update_cursor_position_gcb),
       self);
 }
 
