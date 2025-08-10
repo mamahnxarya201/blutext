@@ -24,8 +24,14 @@
 
 G_BEGIN_DECLS
 
-#define BLUTEXT_TYPE_WINDOW (blutext_window_get_type())
+#define BLUTEXT_TYPE_WINDOW (blutext_window_get_type ())
 
-G_DECLARE_FINAL_TYPE (BlutextWindow, blutext_window, BLUTEXT, WINDOW, AdwApplicationWindow)
+G_DECLARE_FINAL_TYPE (
+    BlutextWindow,
+    blutext_window,
+    BLUTEXT,
+    WINDOW,
+    AdwApplicationWindow)
 
 G_END_DECLS
+

@@ -24,11 +24,17 @@
 
 G_BEGIN_DECLS
 
-#define BLUTEXT_TYPE_APPLICATION (blutext_application_get_type())
+#define BLUTEXT_TYPE_APPLICATION (blutext_application_get_type ())
 
-G_DECLARE_FINAL_TYPE (BlutextApplication, blutext_application, BLUTEXT, APPLICATION, AdwApplication)
+G_DECLARE_FINAL_TYPE (
+    BlutextApplication,
+    blutext_application,
+    BLUTEXT,
+    APPLICATION,
+    AdwApplication)
 
-BlutextApplication *blutext_application_new (const char        *application_id,
-                                             GApplicationFlags  flags);
+BlutextApplication *
+blutext_application_new (const char *application_id, GApplicationFlags flags);
 
 G_END_DECLS
+
